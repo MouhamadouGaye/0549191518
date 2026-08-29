@@ -1,0 +1,8 @@
+npm install @tiptap/react @tiptap/pm @tiptap/starter-kit zustand
+npm install @tiptap/extension-placeholder @tiptap/extension-text-align @tiptap/extension-link @tiptap/extension-underline
+
+npm install @tiptap/react @tiptap/pm @tiptap/starter-kit \
+  @tiptap/extension-placeholder \
+  @tiptap/extension-text-align \
+  @tiptap/extension-link \
+  @tiptap/extension-underline

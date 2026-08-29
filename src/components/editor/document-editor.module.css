@@ -1,0 +1,85 @@
+.editor {
+  min-height: var(--page-content-height);
+}
+
+.editor :global(.tiptap) {
+  min-height: var(--page-content-height);
+
+  outline: none;
+
+  color: var(--color-foreground);
+
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.editor :global(.tiptap > :first-child) {
+  margin-top: 0;
+}
+
+.editor :global(.tiptap h1) {
+  margin: 0 0 20px;
+
+  font-size: 32px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.editor :global(.tiptap h2) {
+  margin: 28px 0 12px;
+
+  font-size: 24px;
+  line-height: 1.3;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+.editor :global(.tiptap h3) {
+  margin: 24px 0 10px;
+
+  font-size: 19px;
+  line-height: 1.35;
+  font-weight: 650;
+}
+
+.editor :global(.tiptap p) {
+  margin: 0 0 14px;
+}
+
+.editor :global(.tiptap ul),
+.editor :global(.tiptap ol) {
+  margin: 0 0 16px;
+  padding-left: 24px;
+}
+
+.editor :global(.tiptap li) {
+  margin: 4px 0;
+}
+
+.editor :global(.tiptap blockquote) {
+  margin: 20px 0;
+  padding-left: 16px;
+
+  border-left: 3px solid var(--color-border);
+
+  color: oklch(45% 0.015 260);
+}
+
+.editor :global(.tiptap a) {
+  color: oklch(50% 0.15 260);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.editor :global(.tiptap p.is-editor-empty:first-child::before) {
+  content: attr(data-placeholder);
+
+  float: left;
+  height: 0;
+
+  color: oklch(65% 0.01 260);
+
+  pointer-events: none;
+}
