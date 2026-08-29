@@ -2,10 +2,11 @@
 
 import { EditorContent } from "@tiptap/react";
 
-import { EditorToolbar } from "./editor-toolbar";
+import { EditorToolbar } from "../editor-toolbar/editor-toolbar";
 
 import styles from "./document-editor.module.css";
-import { useDocumentEditor } from "./editor-config";
+import { useDocumentEditor } from "../editor-config";
+import { EditorPage } from "../editor-page/editor-page";
 
 export function DocumentEditor() {
   const editor = useDocumentEditor();
@@ -18,9 +19,9 @@ export function DocumentEditor() {
     <div className={styles.editor}>
       <EditorToolbar editor={editor} />
 
-      <div className={styles.content}>
+      <EditorPage>
         <EditorContent editor={editor} />
-      </div>
+      </EditorPage>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { DocumentEditor } from "../editor/document-editor";
+import { DocumentEditor } from "../editor/document-editor/document-editor";
 import styles from "./app-shell.module.css";
 import { TopBar } from "./top.bar";
 
@@ -19,3 +19,21 @@ export function AppShell() {
     </main>
   );
 }
+
+// import { DocumentEditor } from "../editor/document-editor/document-editor";
+// import styles from "./app-shell.module.css";
+// import { TopBar } from "./top.bar";
+
+// export function AppShell() {
+//   return (
+//     <main className={styles.shell}>
+//       <TopBar />
+
+//       <div className={styles.workspace}>
+//         <div className={styles.documentArea}>
+//           <DocumentEditor />
+//         </div>
+//       </div>
+//     </main>
+//   );
+// }

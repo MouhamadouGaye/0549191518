@@ -85,6 +85,15 @@
   padding: 48px 24px 96px;
 }
 
+.workspace {
+  min-width: 0;
+  min-height: 0;
+
+  overflow: auto;
+
+  padding: 48px 24px 96px;
+}
+
 .documentArea {
   width: fit-content;
   min-width: min(100%, var(--page-width));
@@ -92,7 +101,7 @@
   margin-inline: auto;
 }
 
-.page {
+/* .page {
   width: var(--page-width);
   min-height: var(--page-height);
 
@@ -104,7 +113,7 @@
   box-shadow:
     0 1px 2px oklch(0% 0 0 / 4%),
     0 8px 32px oklch(0% 0 0 / 8%);
-}
+} */
 
 .pageContent {
   min-height: var(--page-content-height);
