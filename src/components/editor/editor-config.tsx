@@ -93,6 +93,33 @@ export function useDocumentEditor() {
       }),
     ],
 
+    // content: {
+    //   type: "doc",
+    //   content: [
+    //     {
+    //       type: "heading",
+    //       attrs: {
+    //         textAlign: null,
+    //         level: 1,
+    //       },
+    //       content: [
+    //         {
+    //           type: "text",
+    //           text: "Mon document",
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: "paragraph",
+    //       content: [
+    //         {
+    //           type: "text",
+    //           text: "Commencez à écrire votre document ici...",
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // },
     content: {
       type: "doc",
       content: [
@@ -109,15 +136,15 @@ export function useDocumentEditor() {
             },
           ],
         },
-        {
+        ...Array.from({ length: 40 }, (_, index) => ({
           type: "paragraph",
           content: [
             {
               type: "text",
-              text: "Commencez à écrire votre document ici...",
+              text: `Ceci est le paragraphe ${index + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`,
             },
           ],
-        },
+        })),
       ],
     },
   });
