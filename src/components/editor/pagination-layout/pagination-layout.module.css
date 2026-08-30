@@ -1,0 +1,56 @@
+/* .document {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 0;
+
+  padding-block: 48px 96px;
+}
+
+
+
+.pageSeparator {
+  width: var(--page-width);
+  height: 2px;
+
+  flex: 0 0 2px;
+
+  background: var(--color-border);
+}
+ */
+
+/* .document {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+
+  padding-block: 48px 96px;
+}
+
+.pageGroup {
+  display: contents;
+} */
+.document {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+
+  padding-block: 48px 96px;
+}
+
+.source {
+  width: 100%;
+  min-height: var(--page-content-height);
+}
+
+.source :global(.ProseMirror) {
+  width: 100%;
+  min-height: var(--page-content-height);
+
+  outline: none;
+}

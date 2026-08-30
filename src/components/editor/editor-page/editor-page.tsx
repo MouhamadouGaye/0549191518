@@ -9,7 +9,8 @@ type EditorPageProps = {
 export function EditorPage({ children }: EditorPageProps) {
   return (
     <section className={styles.page}>
-      <div className={styles.content}>{children}</div>
+      {" "}
+      <div className={styles.content}>{children} </div>{" "}
     </section>
   );
 }
