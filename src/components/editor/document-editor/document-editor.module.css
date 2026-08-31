@@ -197,13 +197,13 @@
   pointer-events: none;
 }
 
-.pageGap {
+/* .pageGap {
   width: var(--page-width);
   height: 24px;
 
   display: flex;
   align-items: center;
-}
+} */
 
 .pageGap::after {
   content: "";
@@ -212,4 +212,14 @@
   height: 1px;
 
   background: var(--color-border);
+}
+
+.pageGap {
+  width: var(--page-width);
+  height: 24px;
+
+  flex: 0 0 24px;
+
+  display: flex;
+  align-items: center;
 }

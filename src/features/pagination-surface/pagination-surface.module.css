@@ -1,0 +1,178 @@
+/* 
+.surface {
+  position: relative;
+  width: var(--page-width);
+  margin-inline: auto;
+}
+
+.pages {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.page {
+  position: absolute;
+
+  left: 0;
+
+  width: 100%;
+  height: var(--page-height);
+
+  box-sizing: border-box;
+
+  background: var(--color-surface);
+
+  box-shadow:
+    0 1px 2px oklch(0% 0 0 / 4%),
+    0 8px 32px oklch(0% 0 0 / 8%);
+}
+
+.page:not(:first-child) {
+  border-top: 1px solid var(--color-border);
+}
+
+.editor {
+  position: relative;
+  z-index: 1;
+}
+
+.editor :global(.ProseMirror) {
+  width: 100%;
+  min-height: 100%;
+
+  box-sizing: border-box;
+
+  outline: none;
+
+  padding: var(--page-margin-top) var(--page-margin-right)
+    var(--page-margin-bottom) var(--page-margin-left);
+
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+} */
+/* .surface {
+  position: relative;
+  width: var(--page-width);
+  margin-inline: auto;
+}
+
+.pages {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.page {
+  position: absolute;
+
+  left: 0;
+
+  width: 100%;
+  height: var(--page-height);
+
+  box-sizing: border-box;
+
+  background: var(--color-surface);
+
+  box-shadow:
+    0 1px 2px oklch(0% 0 0 / 4%),
+    0 8px 32px oklch(0% 0 0 / 8%);
+}
+
+.page:not(:first-child) {
+  border-top: 1px solid var(--color-border);
+}
+
+.editor {
+  position: relative;
+  z-index: 1;
+}
+
+.editor :global(.ProseMirror) {
+  width: 100%;
+  min-height: 100%;
+
+  box-sizing: border-box;
+
+  outline: none;
+
+  padding: var(--page-margin-top) var(--page-margin-right)
+    var(--page-margin-bottom) var(--page-margin-left);
+
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+} */
+
+.surface {
+  position: relative;
+
+  width: var(--page-width);
+
+  margin-inline: auto;
+}
+
+.pages {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 0;
+
+  pointer-events: none;
+}
+
+.page {
+  position: absolute;
+
+  left: 0;
+
+  width: 100%;
+  height: var(--page-height);
+
+  box-sizing: border-box;
+
+  background: var(--color-surface);
+
+  box-shadow:
+    0 1px 2px oklch(0% 0 0 / 4%),
+    0 8px 32px oklch(0% 0 0 / 8%);
+}
+
+/* Séparation entre deux pages */
+.page:not(:first-child) {
+  border-top: 16px solid oklch(88% 0.01 250);
+}
+
+.editor {
+  position: relative;
+
+  z-index: 1;
+
+  width: 100%;
+}
+
+.editor :global(.ProseMirror) {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  outline: none;
+
+  padding: var(--page-margin-top) var(--page-margin-right)
+    var(--page-margin-bottom) var(--page-margin-left);
+
+  color: var(--color-foreground);
+
+  font-family: var(--font-sans);
+
+  font-size: 16px;
+
+  line-height: 1.7;
+}
