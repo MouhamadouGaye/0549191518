@@ -28,8 +28,7 @@ export function DocumentEditor() {
 
   // const pageCount = pagination?.pageCount ?? 1;
 
-  const pageHeight = mmToPx(PAGE_DIMENSIONS.height);
-  const contentHeight = mmToPx(PAGE_CONTENT_HEIGHT);
+  const pageHeight = mmToPx(PAGE_CONTENT_HEIGHT);
 
   return (
     <div className={styles.editor}>
@@ -48,7 +47,6 @@ export function DocumentEditor() {
           editor={editor}
           pageCount={pagination?.pageCount ?? 1}
           pageHeight={pageHeight}
-          contentHeight={contentHeight}
           onEditorElement={setEditorElement}
         />
       </div>
