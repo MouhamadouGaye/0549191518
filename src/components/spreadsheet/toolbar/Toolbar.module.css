@@ -169,3 +169,59 @@
     display: none;
   }
 }
+/* src/components/spreadsheet/toolbar/Toolbar.module.css */
+
+/* ... styles existants ... */
+
+/* === DROPDOWN MENUS === */
+.dropdownMenu {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  z-index: 100;
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  max-height: 200px;
+  overflow-y: auto;
+  min-width: 150px;
+  padding: 4px 0;
+}
+
+.dropdownItem {
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  font-size: 13px;
+}
+
+.dropdownItem:hover {
+  background: #e8f0fe;
+}
+
+.dropdownItem.active {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+.dropdownItem.active::before {
+  content: "✓ ";
+  color: #1a73e8;
+}
+
+/* === BOUTONS A+ ET A- === */
+.toolbarButton .fontSizeIcon {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.toolbarButton .fontSizeIcon .bigA {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.toolbarButton .fontSizeIcon .smallA {
+  font-size: 12px;
+}
