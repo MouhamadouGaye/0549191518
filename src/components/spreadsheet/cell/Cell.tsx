@@ -1,6 +1,6 @@
 // "use client";
 
-// import { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
+// import { useState, useEffect, useRef, memo, useCallback, useMemo } from "react";
 // import { useStore } from "@/src/store/spreadsheetstore";
 // import styles from "./Cell.module.css";
 
@@ -18,17 +18,34 @@
 //   const [inputValue, setInputValue] = useState("");
 //   const inputRef = useRef<HTMLInputElement>(null);
 
-//   // Utiliser des sélecteurs pour éviter les re-rendus inutiles
 //   const cellData = useStore((state) => state.cells.get(cellId));
 //   const selectedCell = useStore((state) => state.selectedCell);
+//   const selectedRange = useStore((state) => state.selectedRange);
 //   const setCellValue = useStore((state) => state.setCellValue);
 //   const selectCell = useStore((state) => state.selectCell);
-//   const setCellStyle = useStore((state) => state.setCellStyle);
+//   const getRangeCells = useStore((state) => state.getRangeCells);
 
-//   const displayValue = cellData?.display ?? cellData?.value ?? "";
-//   const isSelected = selectedCell === cellId;
+//   // Vérifier si la cellule est dans la plage sélectionnée
+//   const isInRange = useMemo(() => {
+//     if (!selectedRange) return false;
+//     const rangeCells = getRangeCells(selectedRange.start, selectedRange.end);
+//     return rangeCells.includes(cellId);
+//   }, [selectedRange, getRangeCells, cellId]);
 
-//   // Style mémoisé
+//   const displayValue = useMemo(() => {
+//     if (!cellData) return "";
+//     if (cellData.display) return cellData.display;
+//     if (cellData.value === null) return "";
+//     if (typeof cellData.value === "boolean")
+//       return cellData.value ? "VRAI" : "FAUX";
+//     return cellData.value.toString();
+//   }, [cellData]);
+
+//   const isSelected = useMemo(
+//     () => selectedCell === cellId,
+//     [selectedCell, cellId],
+//   );
+
 //   const cellStyle = useMemo(
 //     () => ({
 //       backgroundColor: cellData?.style?.bgColor || "#ffffff",
@@ -40,23 +57,31 @@
 //     [cellData],
 //   );
 
-//   // Mettre à jour la valeur de l'input
 //   useEffect(() => {
-//     setInputValue(cellData?.value || "");
+//     if (cellData) {
+//       const val = cellData.formula || cellData.value;
+//       if (val === null) setInputValue("");
+//       else if (typeof val === "boolean") setInputValue(val ? "VRAI" : "FAUX");
+//       else setInputValue(val.toString());
+//     } else {
+//       setInputValue("");
+//     }
 //   }, [cellData]);
 
-//   // Focus automatique
 //   useEffect(() => {
 //     if (isEditing && inputRef.current) {
-//       inputRef.current.focus();
-//       inputRef.current.select();
+//       requestAnimationFrame(() => {
+//         inputRef.current?.focus();
+//         inputRef.current?.select();
+//       });
 //     }
 //   }, [isEditing]);
 
-//   // Quitter le mode édition
 //   useEffect(() => {
 //     if (selectedCell !== cellId && isEditing) {
-//       if (inputValue !== cellData?.value) {
+//       const currentValue =
+//         cellData?.formula || cellData?.value?.toString() || "";
+//       if (inputValue !== currentValue) {
 //         setCellValue(cellId, inputValue);
 //       }
 //       setIsEditing(false);
@@ -65,15 +90,26 @@
 
 //   const startEditing = useCallback(() => {
 //     setIsEditing(true);
-//     setInputValue(cellData?.value || "");
+//     if (cellData) {
+//       const val = cellData.formula || cellData.value;
+//       if (val === null) setInputValue("");
+//       else if (typeof val === "boolean") setInputValue(val ? "VRAI" : "FAUX");
+//       else setInputValue(val.toString());
+//     } else {
+//       setInputValue("");
+//     }
 //   }, [cellData]);
 
 //   const handleBlur = useCallback(() => {
-//     if (inputValue !== cellData?.value) {
-//       setCellValue(cellId, inputValue);
+//     if (isEditing) {
+//       const currentValue =
+//         cellData?.formula || cellData?.value?.toString() || "";
+//       if (inputValue !== currentValue) {
+//         setCellValue(cellId, inputValue);
+//       }
+//       setIsEditing(false);
 //     }
-//     setIsEditing(false);
-//   }, [cellId, inputValue, cellData, setCellValue]);
+//   }, [cellId, inputValue, cellData, setCellValue, isEditing]);
 
 //   const handleKeyDown = useCallback(
 //     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -85,7 +121,11 @@
 //         selectCell(`${String.fromCharCode(65 + col)}${nextRow}`);
 //       }
 //       if (e.key === "Escape") {
-//         setInputValue(cellData?.value || "");
+//         e.preventDefault();
+//         const val = cellData?.formula || cellData?.value;
+//         if (val === null) setInputValue("");
+//         else if (typeof val === "boolean") setInputValue(val ? "VRAI" : "FAUX");
+//         else setInputValue(val?.toString() || "");
 //         setIsEditing(false);
 //       }
 //       if (e.key === "Tab") {
@@ -102,9 +142,15 @@
 //   const handleClick = useCallback(
 //     (e: React.MouseEvent) => {
 //       e.stopPropagation();
-//       selectCell(cellId);
+//       // Si Shift est enfoncé, on sélectionne une plage
+//       if (e.shiftKey && selectedCell) {
+//         const { selectRange } = useStore.getState();
+//         selectRange(selectedCell, cellId);
+//       } else {
+//         selectCell(cellId);
+//       }
 //     },
-//     [cellId, selectCell],
+//     [cellId, selectedCell, selectCell],
 //   );
 
 //   const handleDoubleClick = useCallback(
@@ -121,10 +167,11 @@
 
 //   return (
 //     <div
-//       className={`${styles.cell} ${isSelected ? styles.selected : ""}`}
+//       className={`${styles.cell} ${isSelected ? styles.selected : ""} ${isInRange ? styles.inRange : ""}`}
 //       style={cellStyle}
 //       onClick={handleClick}
 //       onDoubleClick={handleDoubleClick}
+//       data-cell-id={cellId}
 //     >
 //       {isEditing ? (
 //         <input
@@ -151,7 +198,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
+import { useState, useEffect, useRef, memo, useCallback, useMemo } from "react";
 import { useStore } from "@/src/store/spreadsheetstore";
 import styles from "./Cell.module.css";
 
@@ -168,14 +215,24 @@ export const Cell = memo(({ row, col }: CellProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const cellRef = useRef<HTMLDivElement>(null);
 
   const cellData = useStore((state) => state.cells.get(cellId));
   const selectedCell = useStore((state) => state.selectedCell);
+  const selectedRange = useStore((state) => state.selectedRange);
   const setCellValue = useStore((state) => state.setCellValue);
   const selectCell = useStore((state) => state.selectCell);
+  const selectRange = useStore((state) => state.selectRange);
+  const getRangeCells = useStore((state) => state.getRangeCells);
 
-  // Obtenir la valeur d'affichage
-  const getDisplayValue = useCallback(() => {
+  // Vérifier si la cellule est dans la plage sélectionnée
+  const isInRange = useMemo(() => {
+    if (!selectedRange) return false;
+    const rangeCells = getRangeCells(selectedRange.start, selectedRange.end);
+    return rangeCells.includes(cellId);
+  }, [selectedRange, getRangeCells, cellId]);
+
+  const displayValue = useMemo(() => {
     if (!cellData) return "";
     if (cellData.display) return cellData.display;
     if (cellData.value === null) return "";
@@ -184,8 +241,10 @@ export const Cell = memo(({ row, col }: CellProps) => {
     return cellData.value.toString();
   }, [cellData]);
 
-  const displayValue = getDisplayValue();
-  const isSelected = selectedCell === cellId;
+  const isSelected = useMemo(
+    () => selectedCell === cellId,
+    [selectedCell, cellId],
+  );
 
   const cellStyle = useMemo(
     () => ({
@@ -198,10 +257,9 @@ export const Cell = memo(({ row, col }: CellProps) => {
     [cellData],
   );
 
-  // Mettre à jour la valeur de l'input
   useEffect(() => {
     if (cellData) {
-      const val = cellData.value;
+      const val = cellData.formula || cellData.value;
       if (val === null) setInputValue("");
       else if (typeof val === "boolean") setInputValue(val ? "VRAI" : "FAUX");
       else setInputValue(val.toString());
@@ -210,18 +268,20 @@ export const Cell = memo(({ row, col }: CellProps) => {
     }
   }, [cellData]);
 
-  // Focus automatique
   useEffect(() => {
     if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      });
     }
   }, [isEditing]);
 
-  // Quitter le mode édition
   useEffect(() => {
     if (selectedCell !== cellId && isEditing) {
-      if (inputValue !== (cellData?.value?.toString() || "")) {
+      const currentValue =
+        cellData?.formula || cellData?.value?.toString() || "";
+      if (inputValue !== currentValue) {
         setCellValue(cellId, inputValue);
       }
       setIsEditing(false);
@@ -231,7 +291,7 @@ export const Cell = memo(({ row, col }: CellProps) => {
   const startEditing = useCallback(() => {
     setIsEditing(true);
     if (cellData) {
-      const val = cellData.value;
+      const val = cellData.formula || cellData.value;
       if (val === null) setInputValue("");
       else if (typeof val === "boolean") setInputValue(val ? "VRAI" : "FAUX");
       else setInputValue(val.toString());
@@ -240,22 +300,16 @@ export const Cell = memo(({ row, col }: CellProps) => {
     }
   }, [cellData]);
 
-  const renderStart = performance.now();
-
-  // À la fin du composant, juste avant le return
-  useEffect(() => {
-    const renderTime = performance.now() - renderStart;
-    if (renderTime > 5) {
-      console.log(`⚠️ Cell ${cellId} render lent: ${renderTime}ms`);
-    }
-  });
-
   const handleBlur = useCallback(() => {
-    if (inputValue !== (cellData?.value?.toString() || "")) {
-      setCellValue(cellId, inputValue);
+    if (isEditing) {
+      const currentValue =
+        cellData?.formula || cellData?.value?.toString() || "";
+      if (inputValue !== currentValue) {
+        setCellValue(cellId, inputValue);
+      }
+      setIsEditing(false);
     }
-    setIsEditing(false);
-  }, [cellId, inputValue, cellData, setCellValue]);
+  }, [cellId, inputValue, cellData, setCellValue, isEditing]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -267,7 +321,8 @@ export const Cell = memo(({ row, col }: CellProps) => {
         selectCell(`${String.fromCharCode(65 + col)}${nextRow}`);
       }
       if (e.key === "Escape") {
-        const val = cellData?.value;
+        e.preventDefault();
+        const val = cellData?.formula || cellData?.value;
         if (val === null) setInputValue("");
         else if (typeof val === "boolean") setInputValue(val ? "VRAI" : "FAUX");
         else setInputValue(val?.toString() || "");
@@ -284,12 +339,19 @@ export const Cell = memo(({ row, col }: CellProps) => {
     [cellId, inputValue, row, col, cellData, setCellValue, selectCell],
   );
 
+  // Gestion du clic (sélection simple)
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      selectCell(cellId);
+
+      // Si Shift est enfoncé, on étend la sélection
+      if (e.shiftKey && selectedCell) {
+        selectRange(selectedCell, cellId);
+      } else {
+        selectCell(cellId);
+      }
     },
-    [cellId, selectCell],
+    [cellId, selectedCell, selectCell, selectRange],
   );
 
   const handleDoubleClick = useCallback(
@@ -304,12 +366,20 @@ export const Cell = memo(({ row, col }: CellProps) => {
     setInputValue(e.target.value);
   }, []);
 
+  // Empêcher le drag de sélectionner du texte
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    // Ne pas empêcher l'événement pour permettre le drag
+  }, []);
+
   return (
     <div
-      className={`${styles.cell} ${isSelected ? styles.selected : ""}`}
+      ref={cellRef}
+      className={`${styles.cell} ${isSelected ? styles.selected : ""} ${isInRange ? styles.inRange : ""}`}
       style={cellStyle}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
+      onMouseDown={handleMouseDown}
+      data-cell-id={cellId}
     >
       {isEditing ? (
         <input

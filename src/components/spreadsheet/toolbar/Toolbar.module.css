@@ -1,179 +1,3 @@
-/* 
-.toolbar {
-  display: flex;
-  align-items: center;
-  height: 48px;
-  padding: 0 12px;
-  background: #ffffff;
-  border-bottom: 1px solid #dadce0;
-  gap: 4px;
-  flex-wrap: wrap;
-  user-select: none;
-}
-
-.toolbarGroup {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.separator {
-  width: 1px;
-  height: 28px;
-  background: #dadce0;
-  margin: 0 8px;
-}
-
-.toolbarButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  background: transparent;
-  color: #5f6368;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.toolbarButton:hover {
-  background: #f1f3f4;
-  border-color: #dadce0;
-}
-
-.toolbarButton:active {
-  transform: scale(0.95);
-}
-
-.toolbarButton.active {
-  background: #e8f0fe;
-  color: #1a73e8;
-  border-color: #1a73e8;
-}
-
-.toolbarButton.active:hover {
-  background: #d2e3fc;
-}
-
-.colorPickerWrapper {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 4px;
-}
-
-.colorLabel {
-  font-size: 14px;
-  cursor: pointer;
-  color: #5f6368;
-  padding: 0 2px;
-}
-
-.colorPicker {
-  width: 28px;
-  height: 28px;
-  padding: 2px;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  cursor: pointer;
-  background: transparent;
-}
-
-.colorPicker::-webkit-color-swatch-wrapper {
-  padding: 2px;
-}
-
-.colorPicker::-webkit-color-swatch {
-  border-radius: 2px;
-  border: none;
-}
-
-.colorPicker:hover {
-  border-color: #1a73e8;
-}
-
-.cellInfo {
-  font-size: 12px;
-  color: #5f6368;
-  padding: 0 8px;
-  font-weight: 500;
-}
-
-@media (max-width: 600px) {
-  .toolbar {
-    height: auto;
-    padding: 8px;
-    gap: 8px;
-  }
-
-  .separator {
-    margin: 0 4px;
-  }
-
-  .cellInfo {
-    display: none;
-  }
-} */
-/* src/components/spreadsheet/cell/Cell.module.css */
-/* 
-.cell {
-  width: 100%;
-  height: 100%;
-  padding: 2px 8px;
-  cursor: cell;
-  position: relative;
-  transition: background-color 0.1s ease;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-}
-
-.cell:hover {
-  filter: brightness(0.97);
-}
-
-.cell.selected {
-  outline: 2px solid #1a73e8;
-  outline-offset: -1px;
-  z-index: 2;
-  position: relative;
-}
-
-.cellInput {
-  width: 100%;
-  height: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  font: inherit;
-  color: inherit;
-  padding: 0;
-  margin: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 2px 8px;
-  z-index: 3;
-  box-sizing: border-box;
-}
-
-.cellContent {
-  display: block;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 28px;
-  font-size: 13px;
-  position: relative;
-  z-index: 1;
-} */
-/* src/components/spreadsheet/toolbar/Toolbar.module.css */
-
 .toolbar {
   display: flex;
   align-items: center;
@@ -234,6 +58,34 @@
   background: #d2e3fc;
 }
 
+/* État mixte (quand la plage a des styles différents) */
+.toolbarButton.mixed {
+  background: #fff3e0;
+  color: #e65100;
+  border-color: #ffcc80;
+  position: relative;
+}
+
+.toolbarButton.mixed::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: #e65100;
+  border-radius: 1px;
+}
+
+.toolbarButton.danger {
+  color: #d93025;
+}
+
+.toolbarButton.danger:hover {
+  background: #fce8e6;
+  border-color: #d93025;
+}
+
 .colorPickerWrapper {
   display: flex;
   align-items: center;
@@ -275,6 +127,31 @@
   color: #5f6368;
   padding: 0 8px;
   font-weight: 500;
+}
+
+/* Overlay du sélecteur de plage */
+.rangeSelectorOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 600px) {
