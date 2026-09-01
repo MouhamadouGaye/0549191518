@@ -1,115 +1,26 @@
-/* .gridContainer {
-  overflow: auto;
-  height: calc(100vh - var(--toolbar-height) - var(--formula-bar-height) - 2px);
-  position: relative;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-}
-
-.grid {
-  display: table;
-  border-collapse: separate;
-  border-spacing: 0;
-  min-width: 100%;
-  table-layout: fixed;
-}
-
-.headerRow {
-  display: table-row;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--color-bg-alt);
-}
-
-.corner {
-  display: table-cell;
-  min-width: var(--row-header-width);
-  width: var(--row-header-width);
-  height: var(--cell-height);
-  background: var(--color-bg-alt);
-  border-bottom: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
-  position: sticky;
-  left: 0;
-  z-index: 11;
-}
-
-.columnHeader {
-  display: table-cell;
-  min-width: var(--cell-width);
-  width: var(--cell-width);
-  height: var(--cell-height);
-  background: var(--color-bg-alt);
-  border-bottom: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
-  text-align: center;
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--color-text-secondary);
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-.row {
-  display: table-row;
-}
-
-.rowHeader {
-  display: table-cell;
-  min-width: var(--row-header-width);
-  width: var(--row-header-width);
-  height: var(--cell-height);
-  background: var(--color-bg-alt);
-  border-bottom: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
-  text-align: center;
-  font-size: 12px;
-  color: var(--color-text-secondary);
-  user-select: none;
-  position: sticky;
-  left: 0;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.row:nth-child(even) .rowHeader {
-  background: var(--color-bg-hover);
-} */
 /* src/components/spreadsheet/grid/Grid.module.css */
 
-/* .gridContainer {
+.gridContainer {
   flex: 1;
-  overflow: auto;
   position: relative;
   background: #ffffff;
   border: 1px solid #dadce0;
-  border-radius: 8px;
+  border-radius: 4px;
   margin: 4px;
-}
-
-.gridWrapper {
   display: flex;
   flex-direction: column;
-  min-width: max-content;
-  min-height: 100%;
-  background: #ffffff;
+  overflow: hidden;
+  min-height: 400px;
 }
 
+/* === EN-TÊTES === */
 .headerRow {
-  display: flex;
-  position: sticky;
-  top: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
   z-index: 10;
-  background: #f8f9fa;
-  border-bottom: 2px solid #dadce0;
   min-height: 32px;
+  background: #f8f9fa;
 }
 
 .corner {
@@ -133,135 +44,17 @@
   align-items: center;
   justify-content: center;
   background: #f8f9fa;
-  border-right: 1px solid #dadce0;
   font-weight: 600;
   font-size: 12px;
   color: #5f6368;
   user-select: none;
-  position: relative;
 }
 
-.columnHeader:last-child {
-  border-right: none;
-}
-
-.dataRow {
-  display: flex;
-  min-height: 32px;
-  border-bottom: 1px solid #e8eaed;
-}
-
-.dataRow:last-child {
-  border-bottom: none;
-}
-
-.dataRow:hover {
-  background: #f8f9fa;
-}
-
-.rowHeader {
-  min-width: 40px;
-  width: 40px;
-  height: 32px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f8f9fa;
+.columnHeader:not(:last-child) {
   border-right: 1px solid #dadce0;
-  font-size: 12px;
-  color: #5f6368;
-  user-select: none;
-  position: sticky;
-  left: 0;
-  z-index: 5;
-} */
-
-/* === CELLULES INDIVIDUELLES (dans Cell.module.css) === */
-/* src/components/spreadsheet/grid/Grid.module.css */
-
-/* .gridContainer {
-  flex: 1;
-  overflow: hidden;
-  position: relative;
-  background: #ffffff;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  margin: 4px;
-  display: flex;
-  flex-direction: column;
 }
 
-.headerRow {
-  flex-shrink: 0;
-}
-
-.dataRow {
-  display: flex;
-  min-height: 32px;
-  border-bottom: 1px solid #e8eaed;
-}
-
-.dataRow:hover {
-  background: #f8f9fa;
-}
-
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  font-size: 14px;
-  color: #5f6368;
-}
-
-.gridContainer :global(.VirtuosoGrid__viewport) {
-  scrollbar-width: thin;
-}
-
-.gridContainer :global(.VirtuosoGrid__viewport::-webkit-scrollbar) {
-  width: 8px;
-  height: 8px;
-}
-
-.gridContainer :global(.VirtuosoGrid__viewport::-webkit-scrollbar-track) {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.gridContainer :global(.VirtuosoGrid__viewport::-webkit-scrollbar-thumb) {
-  background: #c1c7cd;
-  border-radius: 4px;
-}
-
-.gridContainer :global(.VirtuosoGrid__viewport::-webkit-scrollbar-thumb:hover) {
-  background: #a8acb0;
-} */
-/* src/components/spreadsheet/grid/Grid.module.css */
-
-/* src/components/spreadsheet/grid/Grid.module.css */
-
-.gridContainer {
-  flex: 1;
-  position: relative;
-  background: #ffffff;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  margin: 4px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  min-height: 400px; /* Hauteur minimale pour éviter le chargement infini */
-}
-
-.headerRow {
-  flex-shrink: 0;
-  overflow: hidden;
-  position: relative;
-  z-index: 10;
-  min-height: 32px;
-}
-
+/* === CORPS === */
 .bodyWrapper {
   flex: 1;
   overflow: auto;
@@ -288,10 +81,12 @@
   background: #a8acb0;
 }
 
+/* === LIGNES === */
 .dataRow {
   display: flex;
   min-height: 32px;
   border-bottom: 1px solid #e8eaed;
+  will-change: transform;
 }
 
 .dataRow:hover {
@@ -320,32 +115,36 @@
   z-index: 5;
 }
 
-.columnHeader {
+.cellWrapper {
   min-width: 80px;
   width: 80px;
   height: 32px;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f8f9fa;
-  border-right: 1px solid #dadce0;
-  font-weight: 600;
-  font-size: 12px;
-  color: #5f6368;
-  user-select: none;
+  border-right: 1px solid #e8eaed;
+  position: relative;
+  cursor: cell;
 }
 
-.corner {
-  min-width: 40px;
-  width: 40px;
-  height: 32px;
-  flex-shrink: 0;
-  background: #f1f3f4;
-  border-right: 1px solid #dadce0;
+.cellWrapper:last-child {
+  border-right: none;
+}
+
+/* === INDICATEUR DE FIN === */
+.scrollEndIndicator {
   position: sticky;
-  left: 0;
-  z-index: 11;
+  bottom: 0;
+  right: 0;
+  padding: 4px 12px;
+  font-size: 11px;
+  color: #9aa0a6;
+  background: rgba(255, 255, 255, 0.95);
+  border-top: 1px solid #e8eaed;
+  text-align: right;
+  pointer-events: none;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  backdrop-filter: blur(4px);
+  z-index: 2;
 }
 
 .loading {

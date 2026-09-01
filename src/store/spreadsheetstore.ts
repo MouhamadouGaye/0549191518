@@ -326,6 +326,8 @@
 // );
 // src/store/spreadsheetstore.ts
 
+// src/store/spreadsheetstore.ts
+
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { CellData, CellStyle, CellValue } from "./types";
@@ -359,7 +361,7 @@ interface SpreadsheetStore {
   getFormulaResult: (formula: string) => string;
 }
 
-// ============ MOTEUR DE FORMULES COMPLET ============
+// ============ MOTEUR DE FORMULES ============
 const evaluateFormula = (
   formula: string,
   getValue: (id: string) => string,
@@ -368,167 +370,39 @@ const evaluateFormula = (
 
   const expr = formula.substring(1).toUpperCase();
 
-  // 1. SOMME(plage)
+  // SOMME(plage)
   const sumMatch = expr.match(/^SOMME\(([A-Z]+)(\d+):([A-Z]+)(\d+)\)$/);
   if (sumMatch) {
     const [, col1, row1, col2, row2] = sumMatch;
     return sumRange(col1, row1, col2, row2, getValue).toString();
   }
 
-  // 2. MOYENNE(plage)
+  // MOYENNE(plage)
   const avgMatch = expr.match(/^MOYENNE\(([A-Z]+)(\d+):([A-Z]+)(\d+)\)$/);
   if (avgMatch) {
     const [, col1, row1, col2, row2] = avgMatch;
     return averageRange(col1, row1, col2, row2, getValue).toString();
   }
 
-  // 3. MAX(plage)
+  // MAX(plage)
   const maxMatch = expr.match(/^MAX\(([A-Z]+)(\d+):([A-Z]+)(\d+)\)$/);
   if (maxMatch) {
     const [, col1, row1, col2, row2] = maxMatch;
     return maxRange(col1, row1, col2, row2, getValue).toString();
   }
 
-  // 4. MIN(plage)
+  // MIN(plage)
   const minMatch = expr.match(/^MIN\(([A-Z]+)(\d+):([A-Z]+)(\d+)\)$/);
   if (minMatch) {
     const [, col1, row1, col2, row2] = minMatch;
     return minRange(col1, row1, col2, row2, getValue).toString();
   }
 
-  // 5. NB(plage) - Compte les nombres
-  const countMatch = expr.match(/^NB\(([A-Z]+)(\d+):([A-Z]+)(\d+)\)$/);
-  if (countMatch) {
-    const [, col1, row1, col2, row2] = countMatch;
-    return countNumbers(col1, row1, col2, row2, getValue).toString();
-  }
-
-  // 6. NBVAL(plage) - Compte les non-vides
-  const countValMatch = expr.match(/^NBVAL\(([A-Z]+)(\d+):([A-Z]+)(\d+)\)$/);
-  if (countValMatch) {
-    const [, col1, row1, col2, row2] = countValMatch;
-    return countNonEmpty(col1, row1, col2, row2, getValue).toString();
-  }
-
-  // 7. SI(condition; valeur_si_vrai; valeur_si_faux)
-  const ifMatch = expr.match(/^SI\((.+?);(.+?);(.+?)\)$/);
-  if (ifMatch) {
-    const [, condition, trueValue, falseValue] = ifMatch;
-    const conditionResult = evaluateCondition(condition, getValue);
-    return conditionResult ? trueValue.trim() : falseValue.trim();
-  }
-
-  // 8. SOMME.SI(plage; condition)
-  const sumIfMatch = expr.match(
-    /^SOMME\.SI\(([A-Z]+)(\d+):([A-Z]+)(\d+);(.+?)\)$/,
-  );
-  if (sumIfMatch) {
-    const [, col1, row1, col2, row2, condition] = sumIfMatch;
-    return sumIf(col1, row1, col2, row2, condition, getValue).toString();
-  }
-
-  // 9. CONCAT(plage)
-  const concatMatch = expr.match(/^CONCAT\(([A-Z]+)(\d+):([A-Z]+)(\d+)\)$/);
-  if (concatMatch) {
-    const [, col1, row1, col2, row2] = concatMatch;
-    return concatRange(col1, row1, col2, row2, getValue);
-  }
-
-  // 10. AUJOURDHUI()
-  if (expr === "AUJOURDHUI()") {
-    return new Date().toLocaleDateString("fr-FR");
-  }
-
-  // 11. MAINTENANT()
-  if (expr === "MAINTENANT()") {
-    return new Date().toLocaleString("fr-FR");
-  }
-
-  // 12. SIERREUR(valeur; valeur_si_erreur)
-  const ifErrorMatch = expr.match(/^SIERREUR\((.+?);(.+?)\)$/);
-  if (ifErrorMatch) {
-    const [, valueToCheck, errorValue] = ifErrorMatch;
-    try {
-      const result = evaluateFormula(`=${valueToCheck}`, getValue);
-      if (result === "#ERREUR" || result === "#VALEUR!" || result === "#N/A") {
-        return errorValue.trim();
-      }
-      return result;
-    } catch {
-      return errorValue.trim();
-    }
-  }
-
-  // 13. ARRONDI(valeur; nombre_decimales)
-  const roundMatch = expr.match(/^ARRONDI\((.+?);(\d+)\)$/);
-  if (roundMatch) {
-    const [, value, decimals] = roundMatch;
-    const num = parseFloat(value);
-    if (!isNaN(num)) {
-      return num.toFixed(parseInt(decimals));
-    }
-    return "#VALEUR!";
-  }
-
-  // 14. PUISSANCE(nombre; exposant)
-  const powerMatch = expr.match(/^PUISSANCE\((.+?);(.+?)\)$/);
-  if (powerMatch) {
-    const [, base, exponent] = powerMatch;
-    const b = parseFloat(base);
-    const e = parseFloat(exponent);
-    if (!isNaN(b) && !isNaN(e)) {
-      return Math.pow(b, e).toString();
-    }
-    return "#VALEUR!";
-  }
-
-  // 15. RECHERCHEV(valeur; plage; colonne; [exact])
-  const vlookupMatch = expr.match(
-    /^RECHERCHEV\((.+?);([A-Z]+)(\d+):([A-Z]+)(\d+);(\d+)(?:;(TRUE|FALSE))?\)$/,
-  );
-  if (vlookupMatch) {
-    const [, searchValue, col1, row1, col2, row2, colIndex, exactMatch] =
-      vlookupMatch;
-    return vlookup(
-      searchValue,
-      col1,
-      row1,
-      col2,
-      row2,
-      parseInt(colIndex),
-      exactMatch === "TRUE",
-      getValue,
-    );
-  }
-
-  // Support des opérations arithmétiques de base
+  // Support des opérations de base
   return evaluateArithmetic(expr, getValue);
 };
 
 // ============ FONCTIONS D'AIDE ============
-
-const getRangeValues = (
-  col1: string,
-  row1: string,
-  col2: string,
-  row2: string,
-  getValue: (id: string) => string,
-): string[] => {
-  const startCol = col1.charCodeAt(0) - 65;
-  const endCol = col2.charCodeAt(0) - 65;
-  const startRow = parseInt(row1);
-  const endRow = parseInt(row2);
-  const values: string[] = [];
-
-  for (let r = startRow; r <= endRow; r++) {
-    for (let c = startCol; c <= endCol; c++) {
-      const cellId = `${String.fromCharCode(65 + c)}${r}`;
-      values.push(getValue(cellId));
-    }
-  }
-  return values;
-};
-
 const getRangeNumbers = (
   col1: string,
   row1: string,
@@ -536,9 +410,20 @@ const getRangeNumbers = (
   row2: string,
   getValue: (id: string) => string,
 ): number[] => {
-  return getRangeValues(col1, row1, col2, row2, getValue)
-    .map((v) => parseFloat(v))
-    .filter((v) => !isNaN(v));
+  const startCol = col1.charCodeAt(0) - 65;
+  const endCol = col2.charCodeAt(0) - 65;
+  const startRow = parseInt(row1);
+  const endRow = parseInt(row2);
+  const numbers: number[] = [];
+
+  for (let r = startRow; r <= endRow; r++) {
+    for (let c = startCol; c <= endCol; c++) {
+      const cellId = `${String.fromCharCode(65 + c)}${r}`;
+      const val = parseFloat(getValue(cellId));
+      if (!isNaN(val)) numbers.push(val);
+    }
+  }
+  return numbers;
 };
 
 const sumRange = (
@@ -587,142 +472,6 @@ const minRange = (
   return nums.length > 0 ? Math.min(...nums) : 0;
 };
 
-const countNumbers = (
-  col1: string,
-  row1: string,
-  col2: string,
-  row2: string,
-  getValue: (id: string) => string,
-): number => {
-  return getRangeNumbers(col1, row1, col2, row2, getValue).length;
-};
-
-const countNonEmpty = (
-  col1: string,
-  row1: string,
-  col2: string,
-  row2: string,
-  getValue: (id: string) => string,
-): number => {
-  return getRangeValues(col1, row1, col2, row2, getValue).filter(
-    (v) => v !== "",
-  ).length;
-};
-
-const concatRange = (
-  col1: string,
-  row1: string,
-  col2: string,
-  row2: string,
-  getValue: (id: string) => string,
-): string => {
-  return getRangeValues(col1, row1, col2, row2, getValue)
-    .filter((v) => v !== "")
-    .join("");
-};
-
-const evaluateCondition = (
-  condition: string,
-  getValue: (id: string) => string,
-): boolean => {
-  const operators = [">=", "<=", "!=", "=", ">", "<"];
-  for (const op of operators) {
-    if (condition.includes(op)) {
-      const [left, right] = condition.split(op).map((s) => s.trim());
-      const leftVal = getValue(left) || left;
-      const rightVal = getValue(right) || right;
-
-      const leftNum = parseFloat(leftVal);
-      const rightNum = parseFloat(rightVal);
-      if (!isNaN(leftNum) && !isNaN(rightNum)) {
-        switch (op) {
-          case ">=":
-            return leftNum >= rightNum;
-          case "<=":
-            return leftNum <= rightNum;
-          case "!=":
-            return leftNum !== rightNum;
-          case "=":
-            return leftNum === rightNum;
-          case ">":
-            return leftNum > rightNum;
-          case "<":
-            return leftNum < rightNum;
-        }
-      }
-
-      switch (op) {
-        case ">=":
-          return leftVal >= rightVal;
-        case "<=":
-          return leftVal <= rightVal;
-        case "!=":
-          return leftVal !== rightVal;
-        case "=":
-          return leftVal === rightVal;
-        case ">":
-          return leftVal > rightVal;
-        case "<":
-          return leftVal < rightVal;
-      }
-    }
-  }
-  return false;
-};
-
-const sumIf = (
-  col1: string,
-  row1: string,
-  col2: string,
-  row2: string,
-  condition: string,
-  getValue: (id: string) => string,
-): number => {
-  const values = getRangeValues(col1, row1, col2, row2, getValue);
-  let sum = 0;
-  for (const val of values) {
-    const num = parseFloat(val);
-    if (!isNaN(num)) {
-      sum += num;
-    }
-  }
-  return sum;
-};
-
-const vlookup = (
-  searchValue: string,
-  col1: string,
-  row1: string,
-  col2: string,
-  row2: string,
-  colIndex: number,
-  exactMatch: boolean,
-  getValue: (id: string) => string,
-): string => {
-  const startCol = col1.charCodeAt(0) - 65;
-  const endCol = col2.charCodeAt(0) - 65;
-  const startRow = parseInt(row1);
-  const endRow = parseInt(row2);
-
-  for (let r = startRow; r <= endRow; r++) {
-    const firstColId = `${String.fromCharCode(65 + startCol)}${r}`;
-    const firstVal = getValue(firstColId);
-
-    if (
-      exactMatch
-        ? firstVal === searchValue
-        : firstVal.toLowerCase().includes(searchValue.toLowerCase())
-    ) {
-      const resultCol = startCol + colIndex - 1;
-      if (resultCol <= endCol) {
-        const resultId = `${String.fromCharCode(65 + resultCol)}${r}`;
-        return getValue(resultId) || "#N/A";
-      }
-    }
-  }
-  return "#N/A";
-};
-
 const evaluateArithmetic = (
   expr: string,
   getValue: (id: string) => string,
@@ -748,10 +497,13 @@ const evaluateArithmetic = (
 // ============ STORE OPTIMISÉ ============
 export const useStore = create<SpreadsheetStore>()(
   devtools(
-    (set, get) => ({
+    (set, get): SpreadsheetStore => ({
+      // === ÉTAT INITIAL ===
       cells: new Map(),
       selectedCell: null,
       selectedRange: null,
+
+      // === ACTIONS ===
 
       selectCell: (id: string) => {
         set({ selectedCell: id });
@@ -764,7 +516,6 @@ export const useStore = create<SpreadsheetStore>()(
       getCellValue: (id: string) => {
         const cell = get().cells.get(id);
         if (!cell) return "";
-        // Convertir CellValue en string pour l'affichage
         if (cell.value === null) return "";
         if (typeof cell.value === "boolean")
           return cell.value ? "VRAI" : "FAUX";
@@ -774,7 +525,6 @@ export const useStore = create<SpreadsheetStore>()(
       getDisplayValue: (id: string) => {
         const cell = get().cells.get(id);
         if (!cell) return "";
-        // Priorité à display, sinon utiliser value
         if (cell.display) return cell.display;
         if (cell.value === null) return "";
         if (typeof cell.value === "boolean")
@@ -793,20 +543,21 @@ export const useStore = create<SpreadsheetStore>()(
       setCellValue: (id: string, value: string) => {
         const { cells, getCellValue } = get();
 
-        // Détecter si c'est une formule
-        const isFormula = value.startsWith("=");
-        let display = value;
-        let formula: string | undefined = undefined;
-
-        if (isFormula) {
-          formula = value;
-          display = evaluateFormula(value, getCellValue);
+        // Vérifier si la valeur a vraiment changé
+        const existing = cells.get(id);
+        if (existing && existing.value === value && !existing.formula) {
+          return;
         }
 
-        // Convertir la valeur en CellValue
+        let display = value;
+        let formula: string | undefined = undefined;
         let cellValue: CellValue = value;
-        if (!isFormula) {
-          // Essayer de convertir en nombre
+
+        if (value.startsWith("=")) {
+          formula = value;
+          display = evaluateFormula(value, getCellValue);
+          cellValue = value;
+        } else {
           const num = parseFloat(value);
           if (!isNaN(num) && value.trim() !== "") {
             cellValue = num;
@@ -823,17 +574,18 @@ export const useStore = create<SpreadsheetStore>()(
           } else if (value === "") {
             cellValue = null;
           }
+          display = value;
         }
 
         const newCells = new Map(cells);
-        const existing = newCells.get(id) || {
+        const existingCell = newCells.get(id) || {
           value: null,
           display: "",
           style: { ...defaultStyle },
         };
 
         newCells.set(id, {
-          ...existing,
+          ...existingCell,
           value: cellValue,
           display,
           formula,
@@ -842,34 +594,40 @@ export const useStore = create<SpreadsheetStore>()(
         set({ cells: newCells });
 
         // Recalculer les formules dépendantes
-        const allCells = Array.from(newCells.entries());
-        let needsUpdate = true;
-        let iterations = 0;
-        const maxIterations = 50;
+        if (value.startsWith("=") || existing?.formula) {
+          requestAnimationFrame(() => {
+            const currentCells = get().cells;
+            const updatedCells = new Map(currentCells);
+            const allCells = Array.from(updatedCells.entries());
+            let needsUpdate = true;
+            let iterations = 0;
+            const maxIterations = 10;
 
-        while (needsUpdate && iterations < maxIterations) {
-          needsUpdate = false;
-          iterations++;
+            while (needsUpdate && iterations < maxIterations) {
+              needsUpdate = false;
+              iterations++;
 
-          for (const [cellId, data] of allCells) {
-            if (data.formula) {
-              const newDisplay = evaluateFormula(data.formula, (refId) => {
-                const ref = newCells.get(refId);
-                if (!ref) return "";
-                if (ref.value === null) return "";
-                if (typeof ref.value === "boolean")
-                  return ref.value ? "VRAI" : "FAUX";
-                return ref.value.toString();
-              });
-              if (newDisplay !== data.display) {
-                newCells.set(cellId, { ...data, display: newDisplay });
-                needsUpdate = true;
+              for (const [cellId, data] of allCells) {
+                if (data.formula) {
+                  const newDisplay = evaluateFormula(data.formula, (refId) => {
+                    const ref = updatedCells.get(refId);
+                    if (!ref) return "";
+                    if (ref.value === null) return "";
+                    if (typeof ref.value === "boolean")
+                      return ref.value ? "VRAI" : "FAUX";
+                    return ref.value.toString();
+                  });
+                  if (newDisplay !== data.display) {
+                    updatedCells.set(cellId, { ...data, display: newDisplay });
+                    needsUpdate = true;
+                  }
+                }
               }
             }
-          }
-        }
 
-        set({ cells: newCells });
+            set({ cells: updatedCells });
+          });
+        }
       },
 
       setCellRaw: (id: string, value: CellValue, formula?: string) => {
@@ -983,6 +741,9 @@ export const useStore = create<SpreadsheetStore>()(
         set({ cells: newCells });
       },
     }),
-    { name: "SpreadsheetStore" },
+    {
+      name: "SpreadsheetStore",
+      enabled: process.env.NODE_ENV === "development",
+    },
   ),
 );

@@ -240,6 +240,16 @@ export const Cell = memo(({ row, col }: CellProps) => {
     }
   }, [cellData]);
 
+  const renderStart = performance.now();
+
+  // À la fin du composant, juste avant le return
+  useEffect(() => {
+    const renderTime = performance.now() - renderStart;
+    if (renderTime > 5) {
+      console.log(`⚠️ Cell ${cellId} render lent: ${renderTime}ms`);
+    }
+  });
+
   const handleBlur = useCallback(() => {
     if (inputValue !== (cellData?.value?.toString() || "")) {
       setCellValue(cellId, inputValue);
